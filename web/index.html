@@ -8,7 +8,7 @@
     <meta name="description" content="This is a sample project for a virtual door application">
     <meta name="author" content="Vibha Choudhary">
 
-    <title>New Visitor</title>
+    <title>Smart Photo Album</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <!-- custom style css -->
@@ -17,40 +17,75 @@
     <link rel="icon" type="image/png" href="favicon.ico">
 
     <!-- api gateway generated sdk -->
-<!--    <script src="./assets/js/sdk/lib/axios/dist/axios.standalone.js"></script>-->
-<!--    <script src="./assets/js/sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>-->
-<!--    <script src="./assets/js/sdk/lib/CryptoJS/rollups/sha256.js"></script>-->
-<!--    <script src="./assets/js/sdk/lib/CryptoJS/components/hmac.js"></script>-->
-<!--    <script src="./assets/js/sdk/lib/CryptoJS/components/enc-base64.js"></script>-->
-<!--    <script src="./assets/js/sdk/lib/url-template/url-template.js"></script>-->
-<!--    <script src="./assets/js/sdk/lib/apiGatewayCore/sigV4Client.js"></script>-->
-<!--    <script src="./assets/js/sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>-->
-<!--    <script src="./assets/js/sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>-->
-<!--    <script src="./assets/js/sdk/lib/apiGatewayCore/utils.js"></script>-->
-
-<!--    <script src="./assets/js/sdk/apigClient.js"></script>-->
+    <script src="./assets/js/sdk/lib/axios/dist/axios.standalone.js"></script>
+    <script src="./assets/js/sdk/lib/CryptoJS/rollups/hmac-sha256.js"></script>
+    <script src="./assets/js/sdk/lib/CryptoJS/rollups/sha256.js"></script>
+    <script src="./assets/js/sdk/lib/CryptoJS/components/hmac.js"></script>
+    <script src="./assets/js/sdk/lib/CryptoJS/components/enc-base64.js"></script>
+    <script src="./assets/js/sdk/lib/url-template/url-template.js"></script>
+    <script src="./assets/js/sdk/lib/apiGatewayCore/sigV4Client.js"></script>
+    <script src="./assets/js/sdk/lib/apiGatewayCore/apiGatewayClient.js"></script>
+    <script src="./assets/js/sdk/lib/apiGatewayCore/simpleHttpClient.js"></script>
+    <script src="./assets/js/sdk/lib/apiGatewayCore/utils.js"></script>
+    <script src="./assets/js/sdk/apigClient.js"></script>
     <script src="./assets/js/aws-sdk.min.js"></script>
 
 </head>
 
 <body>
     <div class="main">
-        <div class="app-name d-flex justify-content-center">
+        <div class="app-name d-flex justify-content-center p-4">
             <h4><span style = "margin-right:4px">
                 <i class="fa fa-camera" style="font-size:30px;color:red"></i>
             </span>Smart Photo Album</h4>
         </div>
+        <div class="search d-flex justify-content-center row mb-3">
+            <div class="input-group col-md-6">
+                <input class="form-control py-2 border-right-0 border" type="search" id="search-input" placeholder="Type or Speak in Microphone">
+                <span class="input-group-append">
+                    <button id="start-button" class="btn btn-outline-secondary border-left-0 border" title="Start Transcription">
+                        <i class="fa fa-microphone"></i>
+                    </button>
+                    <button id="stop-button" class="button-xl btn btn-outline-secondary border-left-0 border" title="Stop Transcription" disabled="true"><i
+                             class="fa fa-stop-circle"></i>
+                    </button>
+                    <button id="reset-button" class="button-xl button-secondary" title="Clear Transcript">
+                    Clear Transcript
+                    </button>
+                </span>
+            </div>
+        </div>
+        <div class="row d-flex justify-content-center">
+            <div class="input-group col-md-2">
+                <button class="search-button btn btn-outline-secondary border-left-0 border mr-2" type="button">
+                <i class="fa fa-search"></i> Search
+                </button>
+                <div style = "display: none">
+                    <input type="file" id="file-upload">
+                </div>
+                <div>
+                    <button class="upload-button btn btn-outline-secondary border-left-0 border" type="button">
+                    <i class="fa fa-upload"></i> Upload
+                    </button>
+                </div>
+                <label class="info" style="display: none">Upload successful!</label>
+
+            </div>
+        </div>
+        <div id="error" class="isa_error"></div>
+        <div class="images wrapper"></div>
+
     </div>
-<!--    <script>-->
-<!--        var sdk = apigClientFactory.newClient({});-->
-<!--    </script>-->
+    <script>
+        var sdk = apigClientFactory.newClient({});
+    </script>
     <!-- jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- application js -->
 
     <script src="./assets/js/bootstrap.min.js"></script>
     <script src="./assets/js/app.js"></script>
-
+    <script src="./assets/js/transcribe/dist/main.js"></script>
 
 </body>
 </html>
