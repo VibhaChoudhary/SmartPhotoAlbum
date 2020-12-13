@@ -80,8 +80,10 @@ $(document).ready(function() {
 
     function searchImages(query) {
         return sdk.searchGet(
-            {'q': query},
+            {},
              {},
-            {});
+            {queryParams: {
+                    'q': query
+                }});
     }
 });
