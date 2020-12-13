@@ -1,0 +1,179 @@
+swagger: '2.0'
+openapi: "3.0.1"
+info:
+  title: AI Photo Search
+  description: 'AI Photo Search application, built during the Cloud and Big Data course.'
+  version: 1.0.0
+schemes:
+  - https
+basePath: /v1
+produces:
+  - application/json
+paths:
+  /search:
+    get:
+      summary: photo search method
+      description: |
+        This API takes in a search query as a query parameter and returns zero or more photos that match the search query.
+      operationId: searchPhotos
+      parameters:
+        in: query
+        name: q
+        required: true
+        schema:
+          type: string
+        description: the string to be searched
+      produces:
+        - application/json
+      responses:
+        '200':
+          description: search results
+          schema:
+            $ref: '#/definitions/SearchResponse'
+        '403':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+      x-amazon-apigateway-request-validator: "Validate query string parameters and headers"
+      x-amazon-apigateway-integration:
+        credentials:
+          Fn::Sub: ${LambdaProxyRole.Arn}
+        requestTemplates:
+          application/json: "{\"q\": \"$input.params('q')\"}"
+        uri:
+          Fn::Sub: arn:aws:apigateway:us-east-1:lambda:path/2015-03-31/functions/${SearchPhotoLambda.Arn}/invocations
+        responses:
+          default:
+            statusCode: '200'
+        httpMethod: POST
+        type: aws_proxy
+
+  /upload/{filename}:
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      tags:
+        - CORS
+      responses:
+        200:
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+          content: {}
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key'''
+              method.response.header.Access-Control-Allow-Methods: '''*'''
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            responseTemplates:
+              application/json: |
+                {}
+    put:
+      summary: photo upload method
+      description: |
+        This API takes in the multi-part body sent to it (ex. a photo) and uploads it to an S3 bucket.
+      operationId: uploadPhoto
+      consumes:
+        - image/png
+        - image/jpg
+        - image/jpeg
+      produces:
+        - application/json
+      parameters:
+        - name: "filename"
+          in: "path"
+          required: true
+          type: "string"
+      x-amazon-apigateway-integration:
+        credentials:
+          Fn::Sub: ${S3ProxyRole.Arn}
+        responses:
+          4\\d{2}:
+            statusCode: "400"
+          default:
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers: '''Content-Type,X-Amz-Date,Authorization,X-Api-Key'''
+              method.response.header.Access-Control-Allow-Methods: '''*'''
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+          5\\d{2}:
+            statusCode: "500"
+        requestParameters:
+          integration.request.header.x-amz-acl: "'authenticated-read'"
+          integration.request.path.filename: "method.request.path.filename"
+        uri:
+          Fn::Sub: arn:aws:apigateway:us-east-1:s3:path/${BucketPrefix}-photos-bucket/{filename}
+        passthroughBehavior: "when_no_match"
+        contentHandling: "CONVERT_TO_BINARY"
+        httpMethod: PUT
+        type: aws
+      responses:
+        '200':
+          description: S3 PUT operation response
+          schema:
+            type: object
+          headers:
+            Access-Control-Allow-Origin:
+              schema:
+                type: string
+            Access-Control-Allow-Methods:
+              schema:
+                type: string
+            Access-Control-Allow-Headers:
+              schema:
+                type: string
+        '403':
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: Unexpected error
+          schema:
+            $ref: '#/definitions/Error'
+definitions:
+  SearchResponse:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Photo'
+  Photo:
+    type: object
+    properties:
+      url:
+        type: string
+      labels:
+        type: array
+        items:
+          type: string
+  Error:
+    type: object
+    properties:
+      code:
+        type: integer
+        format: int32
+      message:
+        type: string

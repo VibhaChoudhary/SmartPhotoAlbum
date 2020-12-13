@@ -1,0 +1,39 @@
+{
+  "name": "amazon-transcribe-websocket-static",
+  "description": "A static site demonstrating real-time audio transcription via Amazon Transcribe over a WebSocket.",
+  "version": "1.0.0",
+  "author": {
+    "name": "Amazon Web Services",
+    "email": "",
+    "url": "http://aws.amazon.com/"
+  },
+  "scripts": {
+    "build": "browserify assets/js/transcribe/lib/main.js -o assets/js/transcribe/dist/main.js -d"
+  },
+  "keywords": [],
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            "@babel/env"
+          ]
+        }
+      ]
+    ]
+  },
+  "dependencies": {
+    "@aws-sdk/eventstream-marshaller": "0.1.0-preview.2",
+    "@aws-sdk/util-utf8-node": "0.1.0-preview.1",
+    "browserify": "^16.5.1",
+    "local-web-server": "^3.0.7",
+    "microphone-stream": "^5.0.1",
+    "query-string": "^6.12.1"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.10.2",
+    "@babel/preset-env": "^7.10.2",
+    "babelify": "^10.0.0"
+  }
+}
