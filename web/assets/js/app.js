@@ -1,5 +1,5 @@
 $(document).ready(function() {
-
+    $('.info').hide()
     // Initialize the Amazon Cognito credentials provider
     $('#stop-button').hide();
     AWS.config.update({
@@ -12,31 +12,37 @@ $(document).ready(function() {
         //submit the form here
         var files = document.getElementById('file-upload').files;
         console.log(files)
-        var imagebase64 = "";
-        var fileName = "";
-        if (files.length > 0) {
-            var file = files[0];
-            var fileName = file.name;
+
+        for(let i=0, file; file=files[i]; i++){
             var reader = new FileReader();
-            $('#file-upload').val('')
-            reader.onloadend = function() {
-                imagebase64 = reader.result.replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
-                console.log(imagebase64)
+            reader.onload = function(e) {
+                console.log("reading of" + file.name)
+                let fileName = file.name;
+                let imagebase64 = e.target.result.replace(/^data:image\/(png|jpg|jpeg);base64,/,"");
                 uploadImage(imagebase64, fileName).
                 then((response) => {
                     console.log("Response", response);
-                    // $('.info').show()
+
                 })
                 .catch((error) => {
                     console.log('An error occurred while uploading image', error);
                 });
             };
+            console.log("handling of " + file.name)
             reader.readAsDataURL(file);
         }
+        $(".info").text(files.length + " file(s) uploaded successfully");
+        $('#file-upload').val('')
+        $('.info').show()
+
     });
 
     $('.upload-button').click(function(){
         $('#file-upload').trigger('click');
+    });
+
+    $('.main').click(function(){
+        $('.info').hide()
     });
 
     $('.search-button').click(function(){
