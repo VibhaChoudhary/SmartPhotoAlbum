@@ -155,5 +155,5 @@ def lambda_handler(event, context):
     return {
         'statusCode': 200,
         "headers":{ 'Access-Control-Allow-Origin' : '*', 'Access-Control-Allow-Headers' : 'Content-Type' },
-        'body': json.dumps('Success')
+        'body': json.dumps('Success from LF2')
     }
