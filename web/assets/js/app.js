@@ -46,7 +46,6 @@ $(document).ready(function() {
     });
 
     $('.search-button').click(function(){
-        $('#stop-button').trigger('click');
         const input = $('#search-input').val();
         if ($.trim(input) === '') {
             return false;
